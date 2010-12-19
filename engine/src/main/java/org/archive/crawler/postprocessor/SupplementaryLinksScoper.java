@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 
 import org.archive.crawler.framework.Scoper;
 import org.archive.modules.CrawlURI;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.deciderules.AcceptDecideRule;
-import org.archive.modules.deciderules.DecideResult;
 import org.archive.modules.deciderules.DecideRule;
 
 
@@ -60,7 +60,7 @@ public class SupplementaryLinksScoper extends Scoper {
     public DecideRule getSupplementaryRule() {
         return (DecideRule) kp.get("supplementaryRule");
     }
-    public void setSupplementaryRule(DecideRule rule) {
+    public void setSupplementaryRule(AcceptRule rule) {
         kp.put("supplementaryRule", rule);
     }
     
@@ -108,17 +108,15 @@ public class SupplementaryLinksScoper extends Scoper {
         CrawlURI curi = (caUri instanceof CrawlURI)?
             (CrawlURI)caUri:
             new CrawlURI(caUri.getUURI());
-        boolean result = false;
-        DecideRule seq = getSupplementaryRule();
-        if (seq.decisionFor(curi) == DecideResult.ACCEPT) {
-            result = true;
+        final boolean isInScope = getSupplementaryRule().accepts(curi);
+        if (isInScope) {
             if (LOGGER.isLoggable(Level.FINER)) {
                 LOGGER.finer("Accepted: " + caUri);
             }
         } else {
             outOfScope(caUri);
         }
-        return result;
+        return isInScope;
     }
     
     /**

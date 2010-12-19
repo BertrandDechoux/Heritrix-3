@@ -30,7 +30,7 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.framework.Frontier;
 import org.archive.io.CrawlerJournal;
 import org.archive.modules.CrawlURI;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.util.ArchiveUtils;
 import org.json.JSONObject;
 
@@ -179,7 +179,7 @@ public class FrontierJournal extends CrawlerJournal {
         boolean includeScheduleds = !params.isNull("includeScheduleds");
         boolean scopeIncludes = !params.isNull("scopeIncludes");
         
-        DecideRule scope = (scopeIncludes) ? frontier.getScope() : null;
+        AcceptRule scope = (scopeIncludes) ? frontier.getScope() : null;
         FrontierJournal newJournal = frontier.getFrontierJournal();
         
         BufferedReader br = ArchiveUtils.getBufferedReader(source);
@@ -254,7 +254,7 @@ public class FrontierJournal extends CrawlerJournal {
         boolean scopeScheduleds = !params.isNull("scopeScheduleds");
         boolean forceRevisit = !params.isNull("forceRevisit");
         
-        DecideRule scope = (scopeScheduleds) ? frontier.getScope() : null;
+        AcceptRule scope = (scopeScheduleds) ? frontier.getScope() : null;
         
         try {
             // Scan log for all 'F+' lines: if not alreadyIncluded, schedule for

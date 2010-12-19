@@ -26,11 +26,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.httpclient.HttpStatus;
 import org.archive.checkpointing.Checkpoint;
 import org.archive.checkpointing.Checkpointable;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.credential.Credential;
 import org.archive.modules.credential.HttpAuthenticationCredential;
 import org.archive.modules.deciderules.AcceptDecideRule;
-import org.archive.modules.deciderules.DecideResult;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.deciderules.DecideRuleHelper;
 import org.archive.net.UURI;
 import org.archive.spring.HasKeyedProperties;
 import org.archive.spring.KeyedProperties;
@@ -90,11 +90,11 @@ implements HasKeyedProperties,
     {
         setShouldProcessRule(new AcceptDecideRule());
     }
-    public DecideRule getShouldProcessRule() {
-        return (DecideRule) kp.get("shouldProcessRule");
+    public AcceptRule getShouldProcessRule() {
+        return (AcceptRule) kp.get("shouldProcessRule");
     }
-    public void setShouldProcessRule(DecideRule rule) {
-        kp.put("shouldProcessRule", rule);
+    public void setShouldProcessRule(AcceptRule rule) {
+        kp.put("shouldProcessRule", DecideRuleHelper.getBackardCompatibleRule(rule));
     }
 
     /**
@@ -132,7 +132,7 @@ implements HasKeyedProperties,
             return ProcessResult.PROCEED;
         }
         
-        if (getShouldProcessRule().decisionFor(uri) == DecideResult.REJECT) {
+        if (!getShouldProcessRule().accepts(uri)) {
             innerRejectProcess(uri);
             return ProcessResult.PROCEED;
         }

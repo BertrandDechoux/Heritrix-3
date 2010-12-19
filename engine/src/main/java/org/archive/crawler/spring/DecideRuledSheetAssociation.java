@@ -19,7 +19,7 @@
  
 package org.archive.crawler.spring;
 
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.Ordered;
@@ -32,14 +32,14 @@ import org.springframework.core.Ordered;
  */
 public class DecideRuledSheetAssociation extends SheetAssociation 
 implements Ordered, Comparable<DecideRuledSheetAssociation>, BeanNameAware {
-    DecideRule rules;
+    AcceptRule rules;
     int order = 0; 
     
-    public DecideRule getRules() {
+    public AcceptRule getRules() {
         return rules;
     }
     @Required
-    public void setRules(DecideRule rules) {
+    public void setRules(AcceptRule rules) {
         this.rules = rules;
     }
 

@@ -27,8 +27,7 @@ import org.archive.crawler.reporting.CrawlerLoggerModule;
 import org.archive.crawler.util.LogUtils;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.Processor;
-import org.archive.modules.deciderules.DecideResult;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.Lifecycle;
 
@@ -43,12 +42,13 @@ public abstract class Scoper extends Processor implements Lifecycle {
     private static Logger LOGGER =
         Logger.getLogger(Scoper.class.getName());
     
-    protected DecideRule scope;
-    public DecideRule getScope() {
+    protected AcceptRule scope;
+    public AcceptRule getScope() {
         return this.scope;
     }
+    
     @Autowired
-    public void setScope(DecideRule scope) {
+    public void setScope(AcceptRule scope) {
         this.scope = scope;
     }
     
@@ -127,17 +127,15 @@ public abstract class Scoper extends Processor implements Lifecycle {
      * otherwise.
      */
     protected boolean isInScope(CrawlURI caUri) {
-        boolean result = false;
-        DecideResult dr = scope.decisionFor(caUri);
-        if (dr == DecideResult.ACCEPT) {
-            result = true;
+        final boolean isInScope = scope.accepts(caUri);
+        if (isInScope) {
             if (LOGGER.isLoggable(Level.FINER)) {
                 LOGGER.finer("Accepted: " + caUri);
             }
         } else {
             outOfScope(caUri);
         }
-        return result;
+        return isInScope;
     }
     
     /**

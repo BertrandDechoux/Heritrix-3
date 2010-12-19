@@ -58,7 +58,7 @@ import org.archive.crawler.prefetch.FrontierPreparer;
 import org.archive.crawler.reporting.CrawlerLoggerModule;
 import org.archive.crawler.spring.SheetOverlaysManager;
 import org.archive.modules.CrawlURI;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.extractor.ExtractorParameters;
 import org.archive.modules.fetcher.FetchStats.Stage;
 import org.archive.modules.net.CrawlHost;
@@ -210,12 +210,12 @@ public abstract class AbstractFrontier
     /** ordinal numbers to assign to created CrawlURIs */
     protected AtomicLong nextOrdinal = new AtomicLong(1);
 
-    protected DecideRule scope;
-    public DecideRule getScope() {
+    protected AcceptRule scope;
+    public AcceptRule getScope() {
         return this.scope;
     }
     @Autowired
-    public void setScope(DecideRule scope) {
+    public void setScope(AcceptRule scope) {
         this.scope = scope;
     }
 
@@ -871,7 +871,7 @@ public abstract class AbstractFrontier
     public long importRecoverFormat(File source, boolean applyScope, 
             boolean includeOnly, boolean forceFetch, String acceptTags) 
     throws IOException {
-        DecideRule scope = (applyScope) ? getScope() : null;
+        AcceptRule scope = (applyScope) ? getScope() : null;
         FrontierJournal newJournal = getFrontierJournal();
         Matcher m = Pattern.compile(acceptTags).matcher(""); 
         BufferedReader br = ArchiveUtils.getBufferedReader(source);
@@ -977,7 +977,7 @@ public abstract class AbstractFrontier
         boolean forceRevisit = !params.isNull("forceRevisit");
         boolean asSeeds = !params.isNull("asSeeds");
         boolean scopeScheduleds = !params.isNull("scopeScheduleds");
-        DecideRule scope = scopeScheduleds ? getScope() : null;
+        AcceptRule scope = scopeScheduleds ? getScope() : null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             Iterator<String> iter = new RegexLineIterator(new LineReadingIterator(br),

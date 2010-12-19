@@ -81,23 +81,23 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.lang.StringUtils;
 import org.archive.httpclient.ConfigurableX509TrustManager;
+import org.archive.httpclient.ConfigurableX509TrustManager.TrustLevel;
 import org.archive.httpclient.HttpRecorderGetMethod;
 import org.archive.httpclient.HttpRecorderMethod;
 import org.archive.httpclient.HttpRecorderPostMethod;
 import org.archive.httpclient.SingleHttpConnectionManager;
-import org.archive.httpclient.ConfigurableX509TrustManager.TrustLevel;
 import org.archive.io.RecorderLengthExceededException;
 import org.archive.io.RecorderTimeoutException;
 import org.archive.io.RecorderTooMuchHeaderException;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.Processor;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.credential.Credential;
 import org.archive.modules.credential.CredentialStore;
 import org.archive.modules.credential.HttpAuthenticationCredential;
 import org.archive.modules.deciderules.AcceptDecideRule;
-import org.archive.modules.deciderules.DecideResult;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.deciderules.DecideRuleHelper;
 import org.archive.modules.extractor.LinkContext;
 import org.archive.modules.net.CrawlHost;
 import org.archive.modules.net.CrawlServer;
@@ -306,11 +306,11 @@ public class FetchHTTP extends Processor implements Lifecycle {
     {
         setShouldFetchBodyRule(new AcceptDecideRule());
     }
-    public DecideRule getShouldFetchBodyRule() {
-        return (DecideRule) kp.get("shouldFetchBodyRule");
+    public AcceptRule getShouldFetchBodyRule() {
+        return (AcceptRule) kp.get("shouldFetchBodyRule");
     }
-    public void setShouldFetchBodyRule(DecideRule rule) {
-        kp.put("shouldFetchBodyRule", rule);
+    public void setShouldFetchBodyRule(AcceptRule rule) {
+        kp.put("shouldFetchBodyRule", DecideRuleHelper.getBackardCompatibleRule(rule));
     }
 
     // see [ 1379040 ] regex for midfetch filter not being stored in crawl order
@@ -705,8 +705,7 @@ public class FetchHTTP extends Processor implements Lifecycle {
         if (curi.isPrerequisite()) {
             return false;
         }
-        DecideResult r = getShouldFetchBodyRule().decisionFor(curi);
-        if (r != DecideResult.REJECT) {
+        if (getShouldFetchBodyRule().accepts(curi)) {
             return false;
         }
         method.markContentBegin(conn);

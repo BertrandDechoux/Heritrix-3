@@ -22,10 +22,11 @@ package org.archive.modules.deciderules;
 import java.io.Serializable;
 
 import org.archive.modules.CrawlURI;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.spring.HasKeyedProperties;
 import org.archive.spring.KeyedProperties;
 
-public abstract class DecideRule implements Serializable, HasKeyedProperties {
+public abstract class DecideRule implements Serializable, HasKeyedProperties, AcceptRule {
     protected KeyedProperties kp = new KeyedProperties();
     public KeyedProperties getKeyedProperties() {
         return kp;
@@ -53,7 +54,7 @@ public abstract class DecideRule implements Serializable, HasKeyedProperties {
 
     }
     
-    public DecideResult decisionFor(CrawlURI uri) {
+    protected DecideResult decisionFor(CrawlURI uri) {
         if (!getEnabled()) {
             return DecideResult.NONE;
         }
@@ -73,6 +74,9 @@ public abstract class DecideRule implements Serializable, HasKeyedProperties {
         return null;
     }
 
+    /* (non-Javadoc)
+	 * @see org.archive.modules.deciderules.AcceptRule#accepts(org.archive.modules.CrawlURI)
+	 */
     public boolean accepts(CrawlURI uri) {
         return DecideResult.ACCEPT == decisionFor(uri);
     }

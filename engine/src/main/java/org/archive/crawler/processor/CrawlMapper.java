@@ -32,9 +32,9 @@ import java.util.Iterator;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.Processor;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.deciderules.AcceptDecideRule;
-import org.archive.modules.deciderules.DecideResult;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.deciderules.DecideRuleHelper;
 import org.archive.spring.ConfigPath;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.fingerprint.ArrayLongFPCache;
@@ -107,12 +107,12 @@ public abstract class CrawlMapper extends Processor implements Lifecycle {
     /** 
      * Decide rules to determine if an outlink is subject to mapping.
      */ 
-    DecideRule outlinkRule = new AcceptDecideRule(); 
-    public DecideRule getOutlinkRule() {
+    AcceptRule outlinkRule = new AcceptDecideRule(); 
+    public AcceptRule getOutlinkRule() {
         return this.outlinkRule;
     }
-    public void setOutlinkRule(DecideRule rule) {
-        this.outlinkRule = rule; 
+    public void setOutlinkRule(AcceptRule rule) {
+        this.outlinkRule = DecideRuleHelper.getBackardCompatibleRule(rule); 
     }
 
     /**
@@ -235,10 +235,7 @@ public abstract class CrawlMapper extends Processor implements Lifecycle {
     }
     
     protected boolean decideToMapOutlink(CrawlURI cauri) {
-        DecideRule rule = getOutlinkRule();
-        boolean rejected = rule.decisionFor(cauri)
-                .equals(DecideResult.REJECT);
-        return !rejected;
+        return getOutlinkRule().accepts(cauri);
     }
     
     

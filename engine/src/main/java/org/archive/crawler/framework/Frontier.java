@@ -25,7 +25,7 @@ import javax.management.openmbean.CompositeData;
 
 import org.archive.crawler.frontier.FrontierJournal;
 import org.archive.modules.CrawlURI;
-import org.archive.modules.deciderules.DecideRule;
+import org.archive.modules.acceptrules.AcceptRule;
 import org.archive.modules.fetcher.FetchStats;
 import org.archive.util.MultiReporter;
 import org.json.JSONException;
@@ -475,7 +475,7 @@ public interface Frontier extends Lifecycle, MultiReporter {
      * Return the internally-configured crawl 'scope' (rules for
      * deciding whether a URI is crawled or not). 
      */
-    public DecideRule getScope();
+    public AcceptRule getScope();
 
     /**
      * Request that Frontier allow crawling to begin. Usually
