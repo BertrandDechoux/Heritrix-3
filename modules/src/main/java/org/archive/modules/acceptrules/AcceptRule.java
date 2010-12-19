@@ -1,5 +1,7 @@
 package org.archive.modules.acceptrules;
 
+import java.io.Serializable;
+
 import org.archive.modules.CrawlURI;
 
 /**
@@ -8,7 +10,7 @@ import org.archive.modules.CrawlURI;
  * 
  * @author Bertrand Dechoux
  */
-public interface AcceptRule {
+public interface AcceptRule extends Serializable {
 
     boolean accepts(CrawlURI uri);
 
